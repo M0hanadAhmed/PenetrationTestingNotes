@@ -10,13 +10,13 @@ My personal cybersecurity learning journey.
 
 ### Web Application Security Fundamentals
 
-| # | Room | Status |
-|---|------|--------|
-| 14 | Walking an Application | ✅ Done |
-| 15 | Content Discovery | ✅ Done |
-| 16 | Subdomain Enumeration | ⬜ |
-| 17 | Web Server Attacks I | ✅ Done |
-| 18 | Web Server Attacks II | ⬜ |
+| # | Room | 
+|---|------| 
+| 14 | Walking an Application | 
+| 15 | Content Discovery | 
+| 16 | Subdomain Enumeration | 
+| 17 | Web Server Attacks I | 
+| 18 | Web Server Attacks II | 
 
 ## About
 
