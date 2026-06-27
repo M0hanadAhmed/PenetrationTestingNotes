@@ -8,11 +8,15 @@ My personal cybersecurity learning journey.
 
 ## Progress
 
-| # | Room | Module |
+### Web Application Security Fundamentals
+
+| # | Room | Status |
 |---|------|--------|
-| 14 | Walking an Application | Web Application Security Fundamentals |
-| 15 | Content Discovery | Web Application Security Fundamentals |
-| 17 | Web Server Attacks I | Web Application Security Fundamentals |
+| 14 | Walking an Application | ✅ Done |
+| 15 | Content Discovery | ✅ Done |
+| 16 | Subdomain Enumeration | ⬜ |
+| 17 | Web Server Attacks I | ✅ Done |
+| 18 | Web Server Attacks II | ⬜ |
 
 ## About
 
