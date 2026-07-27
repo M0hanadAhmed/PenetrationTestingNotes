@@ -1,4 +1,4 @@
-# Room 16 | Modern Web Stacks
+# Modern Web Stacks
 
 ## What This Room Is About
 
