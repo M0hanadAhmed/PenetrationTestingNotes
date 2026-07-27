@@ -169,13 +169,3 @@ gobuster dir -u http://TARGET_IP:80 -w /path/to/wordlist.txt
 # Automated misconfiguration scan
 nikto -h http://TARGET_IP:80 -nointeractive
 ```
-
----
-
-## Key Takeaway
-
-Reconnaissance isn't just scanning — it's reading what the server tells you. Every server type leaks differently: Apache through headers and status pages, Python through serving everything, Express through debug endpoints left in production, Nginx through autoindex and stub_status. The skill is knowing where each one talks and listening before you do anything else.
-
-Misconfigurations are often more valuable than exploits — they require no CVE, no payload, and leave less noise in logs.
-
----
