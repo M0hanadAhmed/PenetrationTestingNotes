@@ -1,14 +1,7 @@
-# Domino — TryHackMe Writeup
+# Domino 
  
-**Difficulty:** Premium room — chained web exploitation
 **Category:** Web / Chained Vulnerabilities
 **Target:** NexusCorp Employee Portal
- 
-> "Chain together vulnerabilities in a cascading attack, where every piece you find knocks over the next."
- 
-Domino lives up to its name. Nothing here is a single critical bug — it's eight small, individually survivable weaknesses that collapse the entire application when chained together: a hardcoded key in frontend JS, a weak password, a disabled signature check, an unrestricted file-read API, a forgeable session cookie, an eval() on remote content, password reuse across a DB and OS account, and a world-writable root cron script. Pull any one domino out and the chain probably holds. NexusCorp left all eight standing.
- 
----
  
 ## Recon
  
