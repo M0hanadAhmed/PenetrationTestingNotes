@@ -1,6 +1,5 @@
 # Domino 
  
-**Category:** Web / Chained Vulnerabilities
 **Target:** NexusCorp Employee Portal
  
 ## Recon
@@ -23,6 +22,7 @@ The web root is a clean employee login page — username format `firstname.lastn
 - emma.taylor — Product Manager
 - david.brown — Full Stack Developer
 - james.wright — Systems Administrator
+
 A `gobuster` sweep of the web root surfaced the real attack surface:
  
 ```
