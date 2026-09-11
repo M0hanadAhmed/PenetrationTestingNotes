@@ -191,7 +191,7 @@ uid=1001(sysadmin) gid=1001(sysadmin) groups=1001(sysadmin)
 sysadmin@tryhackme-2204:~$ cat user.txt
 ```
 
-**🚩 Flag 1:**
+**Flag 1:**
 ```
 THM{sQli_4nd_cMd_1nj3ct10n_l3D_y0u_h3re!}
 ```
@@ -275,7 +275,7 @@ su root
 # password: S3cur3P4ss0nK33p4ss
 ```
 
-**🚩 Flag 2 (root):**
+**Flag 2 (root):**
 ```
 THM{KDBx_V4ul7_H4s_b33n_cr4ck3d_0peN}
 ```
@@ -293,16 +293,3 @@ THM{KDBx_V4ul7_H4s_b33n_cr4ck3d_0peN}
 | V5 | Root credential stored in plaintext inside the cracked vault | Full root access |
 
 ---
-
-## Key Takeaways
-
-1. **String-concatenated SQL queries remain a top-tier bug** even in modern Python/Flask stacks — parameterized queries (or an ORM) are not optional, regardless of language or framework.
-2. **In-app data (audit logs, tickets, comments) can double as an attack roadmap** if it isn't sanitized before being logged or displayed. Here, a previous exploitation attempt was preserved verbatim in the audit trail — genuinely useful reconnaissance handed to the next attacker for free.
-3. **Command injection filters need an allow-list, not a denylist.** Whatever filtering existed on the `target` field didn't stop a bare newline from acting as a command separator — the single most important character to block was left open.
-4. **Application source and config files should never sit inside a web-readable directory.** `secret.config` living next to `app.py` in the same path the app itself could serve back to us turned one RCE into full infrastructure credentials.
-5. **A password vault is only as strong as its master password.** Automated "periodic exports from the credential store" is a reasonable practice — but if the vault's own password is weak enough for rockyou.txt to crack in one second, the entire mechanism is theater.
-6. **Weak master passwords undermine strong storage.** KeePass's encryption (AES/Argon2) is genuinely solid — but `spring` as a master password made none of that matter.
-
----
-
-*Writeup for the "Silent Monitor" room — SQLi got us in, command injection got us a shell, and a five-character master password handed over the keys to root.*
