@@ -4,15 +4,6 @@
 
 ---
 
-## Flags
-
-| # | Description | Flag |
-|---|---|---|
-| 1 | Admin login bypass | `THM{ADMIN_ACCESS_USING_BURP}` |
-| 2 | Contents of `/var/www/user.txt` | `THM{SYSTEM_PWNED_SUCCESSFULLY}` |
-
----
-
 ## 1. Reconnaissance
 
 ### Nmap scan
