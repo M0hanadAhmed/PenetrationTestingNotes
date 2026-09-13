@@ -1,4 +1,6 @@
-Interceptor
+# TryHackMe — Interceptor (MediaHub)
+
+**Room theme:** Web proxy / traffic interception — using Burp Suite to intercept, analyze, and manipulate requests against a web application ("MediaHub") to bypass authentication and reach full system compromise.
 
 **Target:** MediaHub — an internal media portal used by journalists/editors to manage content and publishing.
 
@@ -37,8 +39,8 @@ const res = await fetch("api_login.php", {
 });
 ```
 
-![MediaHub homepage](02-mediahub-homepage.png)
-![Login page](03-login-page.png)
+![MediaHub homepage](images/02-mediahub-homepage.png)
+![Login page](images/03-login-page.png)
 
 ---
 
@@ -96,11 +98,11 @@ Notable results:
 
 - `phpMyAdmin` was reachable but login failed (`Access denied` for `root`, no known password) — a dead end without further creds.
 
-![phpMyAdmin access denied](04-phpmyadmin-access-denied.png)
+![phpMyAdmin access denied](images/04-phpmyadmin-access-denied.png)
 
 - `/uploads/` had directory listing enabled, exposing `avatar_1_<hash>.png` — evidence of a profile-picture upload feature elsewhere in the (authenticated) app.
 
-![Uploads directory listing](05-uploads-directory-listing.png)
+![Uploads directory listing](images/05-uploads-directory-listing.png)
 
 - `config.php` returned a blank body, as expected — PHP files execute server-side, so requesting them directly never reveals source.
 
@@ -158,7 +160,7 @@ With the credential format known, the guess space is tiny (a handful of plausibl
 - **Cookie header removed** from the base request, so the earlier lockout bypass applies across the whole attack.
 - Payload list: `MediaHub2020` – `MediaHub2026`.
 
-![Intruder payload list](07-intruder-payload-list.png)
+![Intruder payload list](images/07-intruder-payload-list.png)
 
 | Payload | Length | Result |
 |---|---|---|
@@ -166,7 +168,7 @@ With the credential format known, the guess space is tiny (a handful of plausibl
 | MediaHub2022/2020/2023 | 407 | Invalid credentials |
 | **MediaHub2026** | **436** | **Different — login succeeded** |
 
-![Intruder results table showing the outlier length](08-intruder-results-table.png)
+![Intruder results table showing the outlier length](images/08-intruder-results-table.png)
 
 The odd-length response confirmed the hit:
 
@@ -174,7 +176,7 @@ The odd-length response confirmed the hit:
 {"ok":true,"message":"Login success. OTP required.","redirect":"otp.php"}
 ```
 
-![OTP-required response](09-otp-required-response.png)
+![OTP-required response](images/09-otp-required-response.png)
 
 The response also issued a **new session cookie**, now tied to a "password verified, awaiting OTP" state.
 
@@ -186,7 +188,7 @@ Visiting `dashboard.php` directly with the new session cookie (skipping OTP) cor
 
 `otp.php` posts to `verify_otp.php` with a single field, `otp` (6-digit numeric).
 
-![Two-Factor Verification page](10-otp-verification-page.png)
+![Two-Factor Verification page](images/10-otp-verification-page.png)
 
 **Rate-limit test:** 11 consecutive wrong OTP submissions using the same session all returned the same clean error with no lockout:
 
@@ -194,7 +196,7 @@ Visiting `dashboard.php` directly with the new session cookie (skipping OTP) cor
 {"ok":false,"error":"Invalid OTP. Try again.","is_verified":false}
 ```
 
-![Invalid OTP response in Repeater](11-otp-invalid-repeater.png)
+![Invalid OTP response in Repeater](images/11-otp-invalid-repeater.png)
 
 This meant the OTP endpoint had **no brute-force protection at all** — a genuine, exploitable weakness (6-digit OTP = up to 1,000,000 combinations, freely retryable).
 
@@ -216,7 +218,7 @@ Response:
 
 This worked — sending no `otp` value at all caused the server's verification check to pass, rather than fail closed. Visiting `dashboard.php` afterward with the same session confirmed the server-side flag had genuinely flipped, not just the JSON response.
 
-![Admin dashboard showing Flag 1](13-admin-dashboard-flag1.png)
+![Admin dashboard showing Flag 1](images/13-admin-dashboard-flag1.png)
 
 **Flag 1:** `THM{ADMIN_ACCESS_USING_BURP}`
 
@@ -239,9 +241,9 @@ The admin dashboard exposes:
 | `http://127.0.0.1/../../../../var/www/user.txt` | `"Private network access blocked"` — resolves hostname and blocks private IP ranges, not just string matching |
 | `http://127.0.0.1.nip.io/../../../../var/www/user.txt` | Same block — confirms resolution happens before the IP check, defeating DNS-rebinding-style tricks |
 
-![Scheme-restricted response](16-import-feed-http-only.png)
-![Private network access blocked](17-import-feed-private-network-blocked.png)
-![nip.io bypass attempt also blocked](18-import-feed-nipio-blocked.png)
+![Scheme-restricted response](images/16-import-feed-http-only.png)
+![Private network access blocked](images/17-import-feed-private-network-blocked.png)
+![nip.io bypass attempt also blocked](images/18-import-feed-nipio-blocked.png)
 
 ### The real vulnerability: shell command injection via `curl`
 
@@ -298,7 +300,6 @@ This value still starts with `http://`, so it passes the application's own schem
 | V3 | `.bak` backup file left on the public web root | Leaked a developer comment disclosing the admin credential format |
 | V4 | OTP verification trusted a client-suppliable field instead of checking a real OTP | Full 2FA bypass with a single crafted request |
 | V5 | URL fetch feature validated the string but passed it unsanitized into a shell command | Local file disclosure via `curl`'s own multi-target / `file://` handling |
-
 ---
 
 *Tools used: Nmap, Gobuster, Burp Suite (Repeater, Intruder), curl.*
