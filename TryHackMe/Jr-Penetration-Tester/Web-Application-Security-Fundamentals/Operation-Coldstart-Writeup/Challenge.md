@@ -198,7 +198,7 @@ THM{96dc7bd50d2fb98fcece01560788b5ab}
 
 ![SSH in, sudo denied, user.txt captured](images/10-ssh-user-txt-flag1.png)
 
-**🚩 Flag 1:** `THM{96dc7bd50d2fb98fcece01560788b5ab}`
+**Flag 1:** `THM{96dc7bd50d2fb98fcece01560788b5ab}`
 
 ---
 
@@ -306,7 +306,7 @@ cat /root/flag.txt
 THM{e6ee84a483d67ade06936fcfd1433e8a}
 ```
 
-**🚩 Flag 2:** `THM{e6ee84a483d67ade06936fcfd1433e8a}`
+**Flag 2:** `THM{e6ee84a483d67ade06936fcfd1433e8a}`
 
 ---
 
@@ -317,9 +317,3 @@ THM{e6ee84a483d67ade06936fcfd1433e8a}
 | V1 | Anonymous FTP exposing the application's own source archive | Full white-box view of the app — the SSRF and its exact allow-list were read directly from `app.py`, no black-box guessing required |
 | V2 | SSRF via a hostname-only allow-list, combined with an IP-based trust check on admin routes | The app's own trusted hostname resolves to localhost, so the server unknowingly proxied a request to its own admin-only endpoint, leaking staging SSH credentials |
 | V3 | Root cron job running `tar` with a wildcard against a directory writable by a low-privilege user | Classic `tar` checkpoint/wildcard injection → arbitrary command execution as root → SUID root shell |
-
-**General lesson:** both major steps in this room came from a system trusting **where a request came from** rather than **what it actually was for**. The SSRF allow-list only checked the hostname string, not that the fetch might target the app's own privileged endpoints; the admin route only checked that traffic originated from localhost, not that it originated from a human. And the privesc came from root blindly trusting shell glob expansion inside a directory it didn't fully control. Trust boundaries drawn around *origin* instead of *intent* keep showing up as the root cause across these rooms.
-
----
-
-*Tools used: Nmap, ftp, tar, SSH, manual source review.*
